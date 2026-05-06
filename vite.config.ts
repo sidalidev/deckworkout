@@ -9,6 +9,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        skipWaiting: false,
+        clientsClaim: false,
+        globPatterns: ['**/*.{js,css,html,svg,webp,png,woff2}'],
+      },
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Deck Workout',

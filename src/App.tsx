@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { buildDeck, shuffle, type PlayingCard } from './lib/deck';
 import { DeckPile } from './components/DeckPile';
 import { PlayingCardFace } from './components/PlayingCardFace';
-
-type Phase = 'idle' | 'playing' | 'done';
+import { clearState, loadState, saveState, type GamePhase } from './lib/persistence';
 
 const TOTAL_CARDS = 52;
 
 function App() {
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [deck, setDeck] = useState<PlayingCard[]>([]);
-  const [drawn, setDrawn] = useState<PlayingCard | null>(null);
-  const [completed, setCompleted] = useState(0);
+  const [phase, setPhase] = useState<GamePhase>(() => loadState()?.phase ?? 'idle');
+  const [deck, setDeck] = useState<PlayingCard[]>(() => loadState()?.deck ?? []);
+  const [drawn, setDrawn] = useState<PlayingCard | null>(() => loadState()?.drawn ?? null);
+  const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
+
+  useEffect(() => {
+    saveState({ phase, deck, drawn, completed });
+  }, [phase, deck, drawn, completed]);
 
   const start = () => {
     setDeck(shuffle(buildDeck()));
@@ -43,6 +46,7 @@ function App() {
     setDeck([]);
     setDrawn(null);
     setCompleted(0);
+    clearState();
   };
 
   return (
