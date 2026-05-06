@@ -1,0 +1,33 @@
+name: deckworkout
+
+services:
+  web:
+    build: .
+    container_name: deckworkout-web
+    restart: always
+    networks:
+      - traefik_web
+    labels:
+      - "traefik.enable=true"
+
+      # Service
+      - "traefik.http.services.deckworkout-web.loadbalancer.server.port=80"
+
+      # HTTPS Router
+      - "traefik.http.routers.deckworkout-web-secure.rule=Host(`deckworkout.dockerbop.fr`)"
+      - "traefik.http.routers.deckworkout-web-secure.entrypoints=websecure"
+      - "traefik.http.routers.deckworkout-web-secure.tls=true"
+      - "traefik.http.routers.deckworkout-web-secure.tls.certresolver=letsencrypt"
+
+      # HTTP Router (redirect)
+      - "traefik.http.routers.deckworkout-web.rule=Host(`deckworkout.dockerbop.fr`)"
+      - "traefik.http.routers.deckworkout-web.entrypoints=web"
+      - "traefik.http.routers.deckworkout-web.middlewares=deckworkout-https-redirect"
+
+      # Middleware redirect
+      - "traefik.http.middlewares.deckworkout-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.deckworkout-https-redirect.redirectscheme.permanent=true"
+
+networks:
+  traefik_web:
+    external: true

@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold-50: #fef9e7;
+  --color-gold-100: #fcefb4;
+  --color-gold-200: #f9e082;
+  --color-gold-300: #f5cf4f;
+  --color-gold-400: #efbc28;
+  --color-gold-500: #d4a017;
+  --color-gold-600: #b8860b;
+  --color-gold-700: #946c0a;
+  --color-gold-800: #6b4f08;
+  --color-gold-900: #3d2d04;
+
+  --font-display: "Playfair Display", "Georgia", serif;
+  --font-sans: system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    overscroll-behavior: none;
+  }
+  body {
+    margin: 0;
+    background: radial-gradient(ellipse at center, #1a1208 0%, #050302 100%);
+    color: #f5cf4f;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .holographic {
+    background: linear-gradient(
+      135deg,
+      #b8860b 0%,
+      #f5cf4f 25%,
+      #fef9e7 35%,
+      #f5cf4f 50%,
+      #b8860b 65%,
+      #946c0a 80%,
+      #f5cf4f 100%
+    );
+    background-size: 200% 200%;
+  }
+  .holographic-shimmer {
+    animation: shimmer 6s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .gold-text {
+    background: linear-gradient(180deg, #fef9e7 0%, #f5cf4f 50%, #b8860b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .card-shadow {
+    box-shadow:
+      0 0 0 1px rgba(212, 160, 23, 0.3),
+      0 4px 24px rgba(0, 0, 0, 0.6),
+      0 12px 60px rgba(212, 160, 23, 0.15),
+      inset 0 0 0 2px rgba(245, 207, 79, 0.4);
+  }
+}
