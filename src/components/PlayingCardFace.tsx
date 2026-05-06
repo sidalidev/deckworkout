@@ -7,6 +7,7 @@ import {
   type PlayingCard,
 } from '../lib/deck';
 import { customFaceUrl } from '../lib/cardAssets';
+import { loreFor } from '../lib/cardLore';
 
 type Props = {
   card: PlayingCard;
@@ -34,6 +35,7 @@ function CustomImageFace({
 }) {
   const exercise = SUIT_EXERCISE[card.suit];
   const reps = repsForRank(card.rank);
+  const lore = loreFor(card.rank, card.suit);
 
   return (
     <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow">
@@ -45,22 +47,42 @@ function CustomImageFace({
         draggable={false}
       />
       <div
-        className="absolute bottom-0 inset-x-0 px-[6%] py-[5%] text-center"
+        className="absolute bottom-0 inset-x-0 px-[5%] pt-[8%] pb-[5%] text-center"
         style={{
           background:
-            'linear-gradient(to top, rgba(15, 10, 2, 0.92) 0%, rgba(15, 10, 2, 0.8) 60%, rgba(15, 10, 2, 0) 100%)',
+            'linear-gradient(to top, rgba(15, 10, 2, 0.95) 0%, rgba(15, 10, 2, 0.88) 55%, rgba(15, 10, 2, 0) 100%)',
         }}
       >
-        <div
-          className="uppercase tracking-[0.3em] text-[3vmin] font-semibold text-gold-200"
-        >
-          {exercise}
-        </div>
-        <div
-          className="mt-1 text-[10vmin] font-black leading-none gold-text"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          ×{reps}
+        {lore && (
+          <>
+            <div
+              className="text-[6vmin] font-black leading-tight gold-text uppercase tracking-wide"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {lore.name}
+            </div>
+            <div
+              className="text-[2.6vmin] italic text-gold-300/80 mt-[1%]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {lore.tagline}
+            </div>
+            <div
+              className="mx-auto my-[3%] h-px w-[40%]"
+              style={{ background: 'linear-gradient(to right, transparent, rgba(245, 207, 79, 0.5), transparent)' }}
+            />
+          </>
+        )}
+        <div className="flex items-baseline justify-center gap-[2%]">
+          <span className="uppercase tracking-[0.3em] text-[2.8vmin] font-semibold text-gold-200">
+            {exercise}
+          </span>
+          <span
+            className="text-[7vmin] font-black leading-none gold-text"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            ×{reps}
+          </span>
         </div>
       </div>
     </div>
