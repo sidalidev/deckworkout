@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   SUIT_EXERCISE,
   SUIT_GLYPH,
@@ -5,12 +6,68 @@ import {
   repsForRank,
   type PlayingCard,
 } from '../lib/deck';
+import { customFaceUrl } from '../lib/cardAssets';
 
 type Props = {
   card: PlayingCard;
 };
 
 export function PlayingCardFace({ card }: Props) {
+  const customSrc = customFaceUrl(card);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (customSrc && !imageFailed) {
+    return <CustomImageFace card={card} src={customSrc} onError={() => setImageFailed(true)} />;
+  }
+
+  return <CssFace card={card} />;
+}
+
+function CustomImageFace({
+  card,
+  src,
+  onError,
+}: {
+  card: PlayingCard;
+  src: string;
+  onError: () => void;
+}) {
+  const exercise = SUIT_EXERCISE[card.suit];
+  const reps = repsForRank(card.rank);
+
+  return (
+    <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow">
+      <img
+        src={src}
+        alt={`${card.rank} of ${card.suit}`}
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={onError}
+        draggable={false}
+      />
+      <div
+        className="absolute bottom-0 inset-x-0 px-[6%] py-[5%] text-center"
+        style={{
+          background:
+            'linear-gradient(to top, rgba(15, 10, 2, 0.92) 0%, rgba(15, 10, 2, 0.8) 60%, rgba(15, 10, 2, 0) 100%)',
+        }}
+      >
+        <div
+          className="uppercase tracking-[0.3em] text-[3vmin] font-semibold text-gold-200"
+        >
+          {exercise}
+        </div>
+        <div
+          className="mt-1 text-[10vmin] font-black leading-none gold-text"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          ×{reps}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CssFace({ card }: { card: PlayingCard }) {
   const isRed = SUIT_IS_RED[card.suit];
   const glyph = SUIT_GLYPH[card.suit];
   const exercise = SUIT_EXERCISE[card.suit];

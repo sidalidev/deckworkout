@@ -1,4 +1,27 @@
+import { useState } from 'react';
+import { BACK_IMAGE_URL } from '../lib/cardAssets';
+
 export function PlayingCardBack() {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (!imageFailed) {
+    return (
+      <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow">
+        <img
+          src={BACK_IMAGE_URL}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={() => setImageFailed(true)}
+          draggable={false}
+        />
+      </div>
+    );
+  }
+
+  return <CssBack />;
+}
+
+function CssBack() {
   return (
     <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow holographic holographic-shimmer">
       <div

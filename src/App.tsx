@@ -171,6 +171,23 @@ function PlayingScreen({
         <AnimatePresence>
           {drawn && (
             <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              style={{
+                background:
+                  'radial-gradient(ellipse at center, rgba(5, 3, 1, 0.88) 0%, rgba(5, 3, 1, 0.6) 60%, rgba(5, 3, 1, 0.2) 100%)',
+                backdropFilter: 'blur(2px)',
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {drawn && (
+            <motion.div
               key={drawn.id}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
               initial={{ opacity: 0 }}
