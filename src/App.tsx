@@ -47,21 +47,18 @@ function App() {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-hidden">
-      <AnimatePresence mode="wait">
-        {phase === 'idle' && <IdleScreen key="idle" onStart={start} />}
-        {phase === 'playing' && (
-          <PlayingScreen
-            key="playing"
-            deckCount={deck.length}
-            completed={completed}
-            drawn={drawn}
-            onDraw={draw}
-            onDone={markDone}
-            onReset={reset}
-          />
-        )}
-        {phase === 'done' && <DoneScreen key="done" onRestart={start} onHome={reset} />}
-      </AnimatePresence>
+      {phase === 'idle' && <IdleScreen onStart={start} />}
+      {phase === 'playing' && (
+        <PlayingScreen
+          deckCount={deck.length}
+          completed={completed}
+          drawn={drawn}
+          onDraw={draw}
+          onDone={markDone}
+          onReset={reset}
+        />
+      )}
+      {phase === 'done' && <DoneScreen onRestart={start} onHome={reset} />}
     </div>
   );
 }
@@ -72,7 +69,6 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
       className="flex flex-col items-center justify-center gap-12 text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
     >
       <div>
@@ -100,16 +96,14 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
         <Legend glyph="♣" label="Burpees" />
       </div>
 
-      <motion.button
+      <button
         type="button"
         onClick={onStart}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.96 }}
-        className="holographic holographic-shimmer px-12 py-5 rounded-full text-xl font-bold uppercase tracking-[0.3em] card-shadow"
+        className="holographic holographic-shimmer px-12 py-5 rounded-full text-xl font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
         style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
       >
         Démarrer
-      </motion.button>
+      </button>
     </motion.div>
   );
 }
@@ -150,7 +144,6 @@ function PlayingScreen({
       className="w-full h-full flex flex-col items-center justify-between py-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="w-full flex justify-between items-center px-2 max-w-md">
@@ -201,34 +194,20 @@ function PlayingScreen({
       </div>
 
       <div className="w-full max-w-md flex justify-center pb-2">
-        <AnimatePresence mode="wait">
-          {drawn ? (
-            <motion.button
-              key="done"
-              type="button"
-              onClick={onDone}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
-              transition={{ duration: 0.2 }}
-              whileTap={{ scale: 0.96 }}
-              className="holographic holographic-shimmer px-14 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow"
-              style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
-            >
-              Fait
-            </motion.button>
-          ) : (
-            <motion.div
-              key="hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-gold-400/60 text-xs uppercase tracking-[0.3em] py-5"
-            >
-              Touche le paquet pour tirer
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {drawn ? (
+          <button
+            type="button"
+            onClick={onDone}
+            className="holographic holographic-shimmer px-14 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
+            style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
+          >
+            Fait
+          </button>
+        ) : (
+          <div className="text-gold-400/60 text-xs uppercase tracking-[0.3em] py-5">
+            Touche le paquet pour tirer
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -240,7 +219,6 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
       className="flex flex-col items-center justify-center gap-10 text-center"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div>
@@ -257,15 +235,14 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
       </div>
 
       <div className="flex flex-col gap-4 items-center">
-        <motion.button
+        <button
           type="button"
           onClick={onRestart}
-          whileTap={{ scale: 0.96 }}
-          className="holographic holographic-shimmer px-12 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow"
+          className="holographic holographic-shimmer px-12 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
           style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
         >
           Recommencer
-        </motion.button>
+        </button>
         <button
           type="button"
           onClick={onHome}
