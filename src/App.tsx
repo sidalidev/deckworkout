@@ -17,6 +17,26 @@ function App() {
     saveState({ phase, deck, drawn, completed });
   }, [phase, deck, drawn, completed]);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== ' ' && e.code !== 'Space' && e.key !== 'Enter') return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      e.preventDefault();
+
+      if (phase === 'idle') {
+        start();
+      } else if (phase === 'playing') {
+        if (drawn) markDone();
+        else if (deck.length > 0) draw();
+      } else if (phase === 'done') {
+        start();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [phase, drawn, deck.length]);
+
   const start = () => {
     setDeck(shuffle(buildDeck()));
     setDrawn(null);
@@ -226,7 +246,7 @@ function PlayingScreen({
           </button>
         ) : (
           <div className="text-gold-400/60 text-xs uppercase tracking-[0.3em] py-5">
-            Tap the deck to draw
+            Tap the deck or press space
           </div>
         )}
       </div>
