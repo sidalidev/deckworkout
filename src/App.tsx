@@ -85,13 +85,13 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
           Workout
         </h2>
         <p className="mt-6 text-gold-300/70 max-w-xs mx-auto text-sm uppercase tracking-[0.3em]">
-          Un paquet · 52 défis
+          One deck · 52 challenges
         </p>
       </div>
 
       <div className="flex flex-col items-center gap-4 text-gold-200/80 text-sm">
-        <Legend glyph="♠" label="Pompes" />
-        <Legend glyph="♥" label="Abdos" red />
+        <Legend glyph="♠" label="Push-ups" />
+        <Legend glyph="♥" label="Sit-ups" red />
         <Legend glyph="♦" label="Squats" red />
         <Legend glyph="♣" label="Burpees" />
       </div>
@@ -102,7 +102,7 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
         className="holographic holographic-shimmer px-12 py-5 rounded-full text-xl font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
         style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
       >
-        Démarrer
+        Start
       </button>
     </motion.div>
   );
@@ -152,7 +152,7 @@ function PlayingScreen({
           onClick={onReset}
           className="text-gold-300/60 text-xs uppercase tracking-[0.2em] hover:text-gold-200"
         >
-          Quitter
+          Quit
         </button>
         <div className="text-gold-200 text-sm uppercase tracking-[0.3em]">
           <span className="gold-text font-bold text-lg">{completed}</span>
@@ -201,11 +201,11 @@ function PlayingScreen({
             className="holographic holographic-shimmer px-14 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
             style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
           >
-            Fait
+            Done
           </button>
         ) : (
           <div className="text-gold-400/60 text-xs uppercase tracking-[0.3em] py-5">
-            Touche le paquet pour tirer
+            Tap the deck to draw
           </div>
         )}
       </div>
@@ -227,10 +227,10 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
           className="mt-4 text-5xl md:text-7xl font-black gold-text"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          Terminé
+          Finished
         </h1>
         <p className="mt-4 text-gold-300/70 uppercase tracking-[0.3em] text-sm">
-          52 cartes vaincues
+          52 cards crushed
         </p>
       </div>
 
@@ -241,14 +241,14 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
           className="holographic holographic-shimmer px-12 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
           style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
         >
-          Recommencer
+          Play again
         </button>
         <button
           type="button"
           onClick={onHome}
           className="text-gold-400/60 text-xs uppercase tracking-[0.2em] hover:text-gold-200"
         >
-          Accueil
+          Home
         </button>
       </div>
     </motion.div>

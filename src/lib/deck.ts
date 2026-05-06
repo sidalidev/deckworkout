@@ -25,8 +25,8 @@ export const SUIT_IS_RED: Record<Suit, boolean> = {
 };
 
 export const SUIT_EXERCISE: Record<Suit, string> = {
-  spades: 'Pompes',
-  hearts: 'Abdos',
+  spades: 'Push-ups',
+  hearts: 'Sit-ups',
   diamonds: 'Squats',
   clubs: 'Burpees',
 };

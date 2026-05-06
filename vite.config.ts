@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'Deck Workout',
         short_name: 'Deck',
-        description: 'Workout au jeu de cartes — un deck, un défi.',
+        description: 'Card deck workout — one deck, one challenge.',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',

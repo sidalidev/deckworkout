@@ -18,7 +18,7 @@ export function DeckPile({ remaining, total, onDraw, disabled }: Props) {
       onClick={onDraw}
       disabled={disabled || remaining === 0}
       className="relative aspect-[5/7] h-[60vmin] max-h-[640px] cursor-pointer disabled:cursor-default focus:outline-none"
-      aria-label={`Tirer une carte (${remaining} restantes)`}
+      aria-label={`Draw a card (${remaining} remaining)`}
     >
       {layers.map((_, i) => {
         const offset = (visibleLayers - 1 - i) * 1.5;
