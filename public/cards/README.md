@@ -1,21 +1,20 @@
 # Card images
 
-Drop generated card images here using this exact naming:
+Generated automatically by `npm run card`. See `scripts/README.md`.
 
-## Faces (16 total — Aces and figures)
-- `ace-spades.webp`
-- `ace-hearts.webp`
-- `ace-diamonds.webp`
-- `ace-clubs.webp`
-- `jack-spades.webp` / `jack-hearts.webp` / `jack-diamonds.webp` / `jack-clubs.webp`
-- `queen-spades.webp` / `queen-hearts.webp` / `queen-diamonds.webp` / `queen-clubs.webp`
-- `king-spades.webp` / `king-hearts.webp` / `king-diamonds.webp` / `king-clubs.webp`
+## Naming (17 files total)
 
-## Back (1)
-- `back.webp`
+Faces (16):
+- `ace-spades.png` / `ace-hearts.png` / `ace-diamonds.png` / `ace-clubs.png`
+- `jack-spades.png` / `jack-hearts.png` / `jack-diamonds.png` / `jack-clubs.png`
+- `queen-spades.png` / `queen-hearts.png` / `queen-diamonds.png` / `queen-clubs.png`
+- `king-spades.png` / `king-hearts.png` / `king-diamonds.png` / `king-clubs.png`
+
+Back (1):
+- `back.png`
 
 ## Notes
-- Format: WebP (best size/quality balance). PNG works too but heavier.
-- Recommended size: 1024×1434 (5:7 aspect ratio).
-- Numbered cards 2–10 are rendered in pure CSS — no images needed.
+
+- Format: PNG (returned by Nano Banana). Optimize to WebP later if needed.
+- Numbered cards 2–10 are rendered in pure CSS — no images required.
 - Missing images fall back gracefully to the CSS-rendered card.
