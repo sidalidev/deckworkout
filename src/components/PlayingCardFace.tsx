@@ -9,6 +9,9 @@ import {
 import { customFaceUrl } from '../lib/cardAssets';
 import { loreFor } from '../lib/cardLore';
 
+const CARD_SHADOW =
+  '0 0 0 2px #2b1d10, 0 6px 0 0 #2b1d10, 0 16px 36px -10px rgba(43, 29, 16, 0.35)';
+
 type Props = {
   card: PlayingCard;
 };
@@ -38,7 +41,10 @@ function CustomImageFace({
   const lore = loreFor(card.rank, card.suit);
 
   return (
-    <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow">
+    <div
+      className="relative w-full h-full rounded-[5%] overflow-hidden"
+      style={{ boxShadow: CARD_SHADOW, background: '#fdf6e3' }}
+    >
       <img
         src={src}
         alt={`${card.rank} of ${card.suit}`}
@@ -50,36 +56,52 @@ function CustomImageFace({
         className="absolute bottom-0 inset-x-0 px-[5%] pt-[8%] pb-[5%] text-center"
         style={{
           background:
-            'linear-gradient(to top, rgba(15, 10, 2, 0.95) 0%, rgba(15, 10, 2, 0.88) 55%, rgba(15, 10, 2, 0) 100%)',
+            'linear-gradient(to top, rgba(43, 29, 16, 0.95) 0%, rgba(43, 29, 16, 0.85) 55%, rgba(43, 29, 16, 0) 100%)',
         }}
       >
         {lore && (
           <>
             <div
-              className="text-[6vmin] font-black leading-tight gold-text uppercase tracking-wide"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="text-[6.5vmin] font-black leading-tight uppercase"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: '#fdf6e3',
+                letterSpacing: '-0.01em',
+              }}
             >
               {lore.name}
             </div>
             <div
-              className="text-[2.6vmin] italic text-gold-300/80 mt-[1%]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="text-[2.6vmin] italic mt-[1%]"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: '#fde6a8',
+              }}
             >
               {lore.tagline}
             </div>
             <div
-              className="mx-auto my-[3%] h-px w-[40%]"
-              style={{ background: 'linear-gradient(to right, transparent, rgba(245, 207, 79, 0.5), transparent)' }}
+              className="mx-auto my-[3%] h-[2px] w-[40%]"
+              style={{
+                background:
+                  'linear-gradient(to right, transparent, rgba(245, 200, 74, 0.6), transparent)',
+              }}
             />
           </>
         )}
         <div className="flex items-baseline justify-center gap-[2%]">
-          <span className="uppercase tracking-[0.3em] text-[2.8vmin] font-semibold text-gold-200">
+          <span
+            className="uppercase tracking-[0.18em] text-[2.8vmin] font-extrabold"
+            style={{ color: '#f7ecd0' }}
+          >
             {exercise}
           </span>
           <span
-            className="text-[7vmin] font-black leading-none gold-text"
-            style={{ fontFamily: 'var(--font-display)' }}
+            className="text-[7vmin] font-black leading-none"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: '#f5c84a',
+            }}
           >
             ×{reps}
           </span>
@@ -94,26 +116,19 @@ function CssFace({ card }: { card: PlayingCard }) {
   const glyph = SUIT_GLYPH[card.suit];
   const exercise = SUIT_EXERCISE[card.suit];
   const reps = repsForRank(card.rank);
-  const pipColor = isRed ? '#c0392b' : '#1a1a1a';
+  const pipColor = isRed ? '#c34a2c' : '#2b1d10';
 
   return (
     <div
-      className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow"
+      className="relative w-full h-full rounded-[5%] overflow-hidden"
       style={{
-        background:
-          'radial-gradient(circle at 30% 20%, #fffdf5 0%, #fbf3d8 40%, #f3e3a6 100%)',
+        background: '#fdf6e3',
+        boxShadow: CARD_SHADOW,
       }}
     >
       <div
-        className="absolute inset-[3%] rounded-[4%] pointer-events-none"
-        style={{
-          background:
-            'linear-gradient(135deg, transparent 0%, transparent 45%, rgba(245, 207, 79, 0.18) 50%, transparent 55%, transparent 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-[2.5%] rounded-[4%] pointer-events-none border"
-        style={{ borderColor: 'rgba(184, 134, 11, 0.55)' }}
+        className="absolute inset-[4%] rounded-[4%] pointer-events-none"
+        style={{ border: '2px solid #ddcfa6' }}
       />
 
       <Corner rank={card.rank} glyph={glyph} color={pipColor} position="tl" />
@@ -124,21 +139,23 @@ function CssFace({ card }: { card: PlayingCard }) {
           className="text-[28vmin] leading-none"
           style={{
             color: pipColor,
-            textShadow: '0 2px 8px rgba(0,0,0,0.15)',
             fontFamily: 'var(--font-display)',
           }}
         >
           {glyph}
         </div>
         <div
-          className="mt-[4%] uppercase tracking-[0.3em] text-[3vmin] font-semibold"
-          style={{ color: '#6b4f08' }}
+          className="mt-[4%] uppercase tracking-[0.18em] text-[3vmin] font-extrabold"
+          style={{ color: '#4a3624' }}
         >
           {exercise}
         </div>
         <div
-          className="mt-[1%] text-[10vmin] font-black leading-none gold-text"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="mt-[1%] text-[10vmin] font-black leading-none"
+          style={{
+            fontFamily: 'var(--font-display)',
+            color: pipColor,
+          }}
         >
           ×{reps}
         </div>
@@ -169,7 +186,7 @@ function Corner({ rank, glyph, color, position }: CornerProps) {
         fontFamily: 'var(--font-display)',
       }}
     >
-      <div className="text-[6vmin] font-bold leading-none">{rank}</div>
+      <div className="text-[6vmin] font-black leading-none">{rank}</div>
       <div className="text-[5vmin] leading-none">{glyph}</div>
     </div>
   );

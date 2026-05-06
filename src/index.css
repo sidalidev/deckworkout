@@ -1,19 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-gold-50: #fef9e7;
-  --color-gold-100: #fcefb4;
-  --color-gold-200: #f9e082;
-  --color-gold-300: #f5cf4f;
-  --color-gold-400: #efbc28;
-  --color-gold-500: #d4a017;
-  --color-gold-600: #b8860b;
-  --color-gold-700: #946c0a;
-  --color-gold-800: #6b4f08;
-  --color-gold-900: #3d2d04;
+  /* Paper / cream — base canvas */
+  --color-paper-50: #fdf6e3;
+  --color-paper-100: #f7ecd0;
+  --color-paper-200: #ede0c0;
+  --color-paper-300: #ddcfa6;
 
-  --font-display: "Playfair Display", "Georgia", serif;
-  --font-sans: system-ui, -apple-system, sans-serif;
+  /* Ink — warm dark browns */
+  --color-ink-300: #b39e7e;
+  --color-ink-500: #76624a;
+  --color-ink-700: #4a3624;
+  --color-ink-900: #2b1d10;
+
+  /* Sea — primary action */
+  --color-sea-100: #c9e4f0;
+  --color-sea-300: #6fb3d4;
+  --color-sea-500: #2f7fa8;
+  --color-sea-700: #1f3a5f;
+
+  /* Sun — highlights, rewards */
+  --color-sun-100: #fde6a8;
+  --color-sun-300: #f5c84a;
+  --color-sun-500: #e09a1f;
+  --color-sun-700: #9a5e15;
+
+  /* Leaf — success, growth */
+  --color-leaf-100: #d8e9b5;
+  --color-leaf-300: #8cb858;
+  --color-leaf-500: #4f8a35;
+  --color-leaf-700: #2d5a1d;
+
+  /* Coral — danger, alerts */
+  --color-coral-100: #fbd5c2;
+  --color-coral-300: #e98a63;
+  --color-coral-500: #c34a2c;
+  --color-coral-700: #7a2a13;
+
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-hand: "Caveat", "Bradley Hand", cursive;
+
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 @layer base {
@@ -23,8 +53,8 @@
   }
   body {
     margin: 0;
-    background: radial-gradient(ellipse at center, #1a1208 0%, #050302 100%);
-    color: #f5cf4f;
+    background: #fdf6e3;
+    color: #2b1d10;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     user-select: none;
@@ -34,40 +64,39 @@
 }
 
 @layer utilities {
-  .holographic {
-    background: linear-gradient(
-      135deg,
-      #b8860b 0%,
-      #f5cf4f 25%,
-      #fef9e7 35%,
-      #f5cf4f 50%,
-      #b8860b 65%,
-      #946c0a 80%,
-      #f5cf4f 100%
-    );
-    background-size: 200% 200%;
+  /* Cel shelf — Korogane signature: hard 4px ink drop that collapses on press */
+  .cel-shelf {
+    border: 2px solid #2b1d10;
+    box-shadow: 0 4px 0 0 #2b1d10;
+    transition: transform 80ms ease, box-shadow 80ms ease;
   }
-  .holographic-shimmer {
-    animation: shimmer 6s ease-in-out infinite;
+  .cel-shelf-sm {
+    border: 2px solid #2b1d10;
+    box-shadow: 0 2px 0 0 #2b1d10;
+    transition: transform 80ms ease, box-shadow 80ms ease;
   }
-  @keyframes shimmer {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+  .cel-shelf:active,
+  .cel-shelf-press:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 #2b1d10;
   }
-
-  .gold-text {
-    background: linear-gradient(180deg, #fef9e7 0%, #f5cf4f 50%, #b8860b 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+  .cel-shelf-sm:active {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 0 #2b1d10;
   }
 
-  .card-shadow {
-    box-shadow:
-      0 0 0 1px rgba(212, 160, 23, 0.3),
-      0 4px 24px rgba(0, 0, 0, 0.6),
-      0 12px 60px rgba(212, 160, 23, 0.15),
-      inset 0 0 0 2px rgba(245, 207, 79, 0.4);
+  .paper-grain {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(184, 134, 11, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(118, 98, 74, 0.05) 0%, transparent 50%);
+  }
+
+  .ink-text {
+    color: #2b1d10;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 }

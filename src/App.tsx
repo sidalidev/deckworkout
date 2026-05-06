@@ -90,44 +90,38 @@ function App() {
 function IdleScreen({ onStart }: { onStart: () => void }) {
   return (
     <motion.div
-      className="flex flex-col items-center justify-center gap-12 text-center"
+      className="flex flex-col items-center justify-center gap-10 text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       <div>
         <h1
-          className="text-6xl md:text-8xl font-black gold-text tracking-tight"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="text-6xl md:text-8xl font-black tracking-tight ink-text display"
+          style={{ fontWeight: 900 }}
         >
           Deck
         </h1>
         <h2
-          className="text-3xl md:text-5xl font-bold gold-text -mt-2"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="text-3xl md:text-5xl font-bold -mt-2 ink-text display"
         >
           Workout
         </h2>
-        <p className="mt-6 text-gold-300/70 max-w-xs mx-auto text-sm uppercase tracking-[0.3em]">
+        <p className="mt-5 text-ink-700 max-w-xs mx-auto text-sm font-bold uppercase tracking-[0.18em]">
           One deck · 52 challenges
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-4 text-gold-200/80 text-sm">
+      <div className="flex flex-col items-center gap-3 text-ink-700 text-sm">
         <Legend glyph="♠" label="Push-ups" />
         <Legend glyph="♥" label="Sit-ups" red />
         <Legend glyph="♦" label="Squats" red />
         <Legend glyph="♣" label="Burpees" />
       </div>
 
-      <button
-        type="button"
-        onClick={onStart}
-        className="holographic holographic-shimmer px-12 py-5 rounded-full text-xl font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
-        style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
-      >
+      <CelButton onClick={onStart} variant="sea">
         Start
-      </button>
+      </CelButton>
     </motion.div>
   );
 }
@@ -136,12 +130,14 @@ function Legend({ glyph, label, red }: { glyph: string; label: string; red?: boo
   return (
     <div className="flex items-center gap-3">
       <span
-        className="text-2xl"
-        style={{ color: red ? '#e57373' : '#f5cf4f' }}
+        className="text-2xl leading-none"
+        style={{ color: red ? '#c34a2c' : '#2b1d10' }}
       >
         {glyph}
       </span>
-      <span className="uppercase tracking-[0.3em] text-xs">{label}</span>
+      <span className="uppercase tracking-[0.18em] text-xs font-bold text-ink-700">
+        {label}
+      </span>
     </div>
   );
 }
@@ -174,13 +170,18 @@ function PlayingScreen({
         <button
           type="button"
           onClick={onReset}
-          className="text-gold-300/60 text-xs uppercase tracking-[0.2em] hover:text-gold-200"
+          className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900"
         >
           Quit
         </button>
-        <div className="text-gold-200 text-sm uppercase tracking-[0.3em]">
-          <span className="gold-text font-bold text-lg">{completed}</span>
-          <span className="text-gold-700"> / {TOTAL_CARDS}</span>
+        <div className="text-ink-700 text-sm uppercase tracking-[0.18em] font-bold">
+          <span
+            className="text-ink-900 font-black text-lg display mr-1"
+            style={{ color: '#2f7fa8' }}
+          >
+            {completed}
+          </span>
+          <span className="text-ink-300">/ {TOTAL_CARDS}</span>
         </div>
       </div>
 
@@ -202,8 +203,7 @@ function PlayingScreen({
               transition={{ duration: 0.25 }}
               style={{
                 background:
-                  'radial-gradient(ellipse at center, rgba(5, 3, 1, 0.88) 0%, rgba(5, 3, 1, 0.6) 60%, rgba(5, 3, 1, 0.2) 100%)',
-                backdropFilter: 'blur(2px)',
+                  'radial-gradient(ellipse at center, rgba(43, 29, 16, 0.6) 0%, rgba(43, 29, 16, 0.35) 60%, rgba(43, 29, 16, 0.05) 100%)',
               }}
             />
           )}
@@ -236,16 +236,11 @@ function PlayingScreen({
 
       <div className="w-full max-w-md flex justify-center pb-2">
         {drawn ? (
-          <button
-            type="button"
-            onClick={onDone}
-            className="holographic holographic-shimmer px-14 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
-            style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
-          >
+          <CelButton onClick={onDone} variant="sea" size="md">
             Done
-          </button>
+          </CelButton>
         ) : (
-          <div className="text-gold-400/60 text-xs uppercase tracking-[0.3em] py-5">
+          <div className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold py-5">
             Tap the deck or press space
           </div>
         )}
@@ -257,42 +252,78 @@ function PlayingScreen({
 function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () => void }) {
   return (
     <motion.div
-      className="flex flex-col items-center justify-center gap-10 text-center"
+      className="flex flex-col items-center justify-center gap-8 text-center"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
     >
       <div>
-        <div className="text-7xl md:text-8xl">👑</div>
+        <div className="text-7xl md:text-8xl leading-none" style={{ filter: 'drop-shadow(0 4px 0 #2b1d10)' }}>
+          🏆
+        </div>
         <h1
-          className="mt-4 text-5xl md:text-7xl font-black gold-text"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="mt-6 text-5xl md:text-7xl font-black ink-text display"
+          style={{ fontWeight: 900 }}
         >
           Finished
         </h1>
-        <p className="mt-4 text-gold-300/70 uppercase tracking-[0.3em] text-sm">
+        <p className="mt-3 text-ink-700 uppercase tracking-[0.18em] text-sm font-bold">
           52 cards crushed
         </p>
       </div>
 
       <div className="flex flex-col gap-4 items-center">
-        <button
-          type="button"
-          onClick={onRestart}
-          className="holographic holographic-shimmer px-12 py-4 rounded-full text-lg font-bold uppercase tracking-[0.3em] card-shadow transition-transform hover:scale-105 active:scale-95"
-          style={{ color: '#3d2d04', fontFamily: 'var(--font-display)' }}
-        >
+        <CelButton onClick={onRestart} variant="leaf">
           Play again
-        </button>
+        </CelButton>
         <button
           type="button"
           onClick={onHome}
-          className="text-gold-400/60 text-xs uppercase tracking-[0.2em] hover:text-gold-200"
+          className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900"
         >
           Home
         </button>
       </div>
     </motion.div>
+  );
+}
+
+type CelButtonVariant = 'sea' | 'leaf' | 'sun' | 'coral';
+type CelButtonSize = 'md' | 'lg';
+
+function CelButton({
+  children,
+  onClick,
+  variant = 'sea',
+  size = 'lg',
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  variant?: CelButtonVariant;
+  size?: CelButtonSize;
+}) {
+  const palette: Record<CelButtonVariant, { bg: string; fg: string }> = {
+    sea: { bg: '#2f7fa8', fg: '#fdf6e3' },
+    leaf: { bg: '#4f8a35', fg: '#fdf6e3' },
+    sun: { bg: '#f5c84a', fg: '#2b1d10' },
+    coral: { bg: '#c34a2c', fg: '#fdf6e3' },
+  };
+  const v = palette[variant];
+  const sizing = size === 'lg' ? 'px-12 py-4 text-lg rounded-2xl' : 'px-10 py-3 text-base rounded-xl';
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`cel-shelf cel-shelf-press ${sizing} font-extrabold uppercase tracking-[0.12em]`}
+      style={{
+        background: v.bg,
+        color: v.fg,
+        fontFamily: 'var(--font-sans)',
+      }}
+    >
+      {children}
+    </button>
   );
 }
 

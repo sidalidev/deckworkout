@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { BACK_IMAGE_URL } from '../lib/cardAssets';
 
+const CARD_SHADOW =
+  '0 0 0 2px #2b1d10, 0 6px 0 0 #2b1d10, 0 16px 36px -10px rgba(43, 29, 16, 0.35)';
+
 export function PlayingCardBack() {
   const [imageFailed, setImageFailed] = useState(false);
 
   if (!imageFailed) {
     return (
-      <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow">
+      <div
+        className="relative w-full h-full rounded-[5%] overflow-hidden"
+        style={{ boxShadow: CARD_SHADOW, background: '#fdf6e3' }}
+      >
         <img
           src={BACK_IMAGE_URL}
           alt=""
@@ -23,40 +29,41 @@ export function PlayingCardBack() {
 
 function CssBack() {
   return (
-    <div className="relative w-full h-full rounded-[5%] overflow-hidden card-shadow holographic holographic-shimmer">
+    <div
+      className="relative w-full h-full rounded-[5%] overflow-hidden"
+      style={{
+        background: '#fdf6e3',
+        boxShadow: CARD_SHADOW,
+      }}
+    >
       <div
-        className="absolute inset-[3%] rounded-[4%] border-2"
+        className="absolute inset-[5%] rounded-[4%]"
         style={{
-          borderColor: 'rgba(61, 45, 4, 0.7)',
+          border: '2px solid #2b1d10',
           background:
-            'repeating-linear-gradient(45deg, rgba(61, 45, 4, 0.08) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(61, 45, 4, 0.06) 0 6px, transparent 6px 14px)',
+            'repeating-linear-gradient(45deg, rgba(43, 29, 16, 0.05) 0 8px, transparent 8px 16px)',
         }}
-      />
-      <div
-        className="absolute inset-[8%] rounded-[3%] border"
-        style={{ borderColor: 'rgba(61, 45, 4, 0.55)' }}
       />
       <div className="absolute inset-0 flex items-center justify-center">
         <div
           className="text-[28vmin] leading-none"
           style={{
-            color: 'rgba(61, 45, 4, 0.85)',
+            color: '#2b1d10',
             fontFamily: 'var(--font-display)',
-            textShadow: '0 2px 6px rgba(255, 215, 100, 0.4)',
           }}
         >
           ♛
         </div>
       </div>
       <div
-        className="absolute top-[12%] left-1/2 -translate-x-1/2 uppercase tracking-[0.5em] text-[2.4vmin] font-bold"
-        style={{ color: 'rgba(61, 45, 4, 0.8)' }}
+        className="absolute top-[14%] left-1/2 -translate-x-1/2 uppercase tracking-[0.4em] text-[2.4vmin] font-black"
+        style={{ color: '#4a3624' }}
       >
         Deck
       </div>
       <div
-        className="absolute bottom-[12%] left-1/2 -translate-x-1/2 uppercase tracking-[0.5em] text-[2.4vmin] font-bold"
-        style={{ color: 'rgba(61, 45, 4, 0.8)' }}
+        className="absolute bottom-[14%] left-1/2 -translate-x-1/2 uppercase tracking-[0.4em] text-[2.4vmin] font-black"
+        style={{ color: '#4a3624' }}
       >
         Workout
       </div>
