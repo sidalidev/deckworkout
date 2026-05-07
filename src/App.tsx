@@ -23,6 +23,7 @@ function App() {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       e.preventDefault();
+      if (e.repeat) return;
 
       if (phase === 'idle') {
         start();
@@ -195,41 +196,20 @@ function PlayingScreen({
 
         <AnimatePresence>
           {drawn && (
-            <motion.div
-              className="absolute inset-0 pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              style={{
-                background:
-                  'radial-gradient(ellipse at center, rgba(43, 29, 16, 0.6) 0%, rgba(43, 29, 16, 0.35) 60%, rgba(43, 29, 16, 0.05) 100%)',
-              }}
-            />
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {drawn && (
-            <motion.div
+            <motion.button
               key={drawn.id}
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              type="button"
+              onClick={onDone}
+              aria-label="Done — next card"
+              className="absolute aspect-[5/7] h-[60vmin] max-h-[640px] cursor-pointer focus:outline-none"
+              style={{ transformPerspective: 1200 }}
+              initial={{ rotateY: 180, scale: 0.6, y: -30, opacity: 0 }}
+              animate={{ rotateY: 0, scale: 1, y: 0, opacity: 1 }}
+              exit={{ x: '120%', rotate: 25, opacity: 0, transition: { duration: 0.4, ease: 'easeIn' } }}
+              transition={{ type: 'spring', stiffness: 180, damping: 22 }}
             >
-              <motion.div
-                className="aspect-[5/7] h-[60vmin] max-h-[640px]"
-                style={{ transformPerspective: 1200 }}
-                initial={{ rotateY: 180, scale: 0.6, y: -30 }}
-                animate={{ rotateY: 0, scale: 1, y: 0 }}
-                exit={{ x: '120%', rotate: 25, opacity: 0, transition: { duration: 0.4, ease: 'easeIn' } }}
-                transition={{ type: 'spring', stiffness: 180, damping: 22 }}
-              >
-                <PlayingCardFace card={drawn} />
-              </motion.div>
-            </motion.div>
+              <PlayingCardFace card={drawn} />
+            </motion.button>
           )}
         </AnimatePresence>
       </div>
