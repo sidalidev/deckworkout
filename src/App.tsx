@@ -201,7 +201,7 @@ function PlayingScreen({
               type="button"
               onClick={onDone}
               aria-label="Done — next card"
-              className="absolute aspect-[5/7] h-[60vmin] max-h-[640px] cursor-pointer focus:outline-none"
+              className="absolute inset-0 m-auto aspect-[5/7] h-[60vmin] max-h-[640px] cursor-pointer focus:outline-none"
               style={{ transformPerspective: 1200 }}
               initial={{ rotateY: 180, scale: 0.6, y: -30, opacity: 0 }}
               animate={{ rotateY: 0, scale: 1, y: 0, opacity: 1 }}
