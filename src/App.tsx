@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { buildDeck, shuffle, type PlayingCard } from './lib/deck';
 import { DeckPile } from './components/DeckPile';
 import { PlayingCardFace } from './components/PlayingCardFace';
 import { clearState, loadState, saveState, type GamePhase } from './lib/persistence';
+import { randomTip } from './lib/tips';
 
 const TOTAL_CARDS = 52;
 
@@ -89,9 +90,10 @@ function App() {
 }
 
 function IdleScreen({ onStart }: { onStart: () => void }) {
+  const tip = useMemo(() => randomTip(), []);
   return (
     <motion.div
-      className="flex flex-col items-center justify-center gap-10 text-center"
+      className="flex flex-col items-center justify-center gap-8 text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -120,10 +122,31 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
         <Legend glyph="♣" label="Burpees" />
       </div>
 
+      <TipCard tip={tip} />
+
       <CelButton onClick={onStart} variant="sea">
         Start
       </CelButton>
     </motion.div>
+  );
+}
+
+function TipCard({ tip }: { tip: string }) {
+  return (
+    <div
+      className="cel-shelf-sm rounded-xl px-4 py-3 max-w-xs text-left"
+      style={{ background: '#f7ecd0' }}
+    >
+      <div
+        className="text-[0.65rem] uppercase tracking-[0.22em] font-extrabold mb-1"
+        style={{ color: '#9a5e15' }}
+      >
+        Did you know?
+      </div>
+      <p className="text-[0.875rem] leading-snug" style={{ color: '#4a3624' }}>
+        {tip}
+      </p>
+    </div>
   );
 }
 
@@ -230,9 +253,10 @@ function PlayingScreen({
 }
 
 function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () => void }) {
+  const tip = useMemo(() => randomTip(), []);
   return (
     <motion.div
-      className="flex flex-col items-center justify-center gap-8 text-center"
+      className="flex flex-col items-center justify-center gap-6 text-center"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
@@ -251,6 +275,8 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
           52 cards crushed
         </p>
       </div>
+
+      <TipCard tip={tip} />
 
       <div className="flex flex-col gap-4 items-center">
         <CelButton onClick={onRestart} variant="leaf">
