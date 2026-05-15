@@ -5,6 +5,7 @@ import { DeckPile } from './components/DeckPile';
 import { PlayingCardFace } from './components/PlayingCardFace';
 import { clearState, loadState, saveState, type GamePhase } from './lib/persistence';
 import { randomTip } from './lib/tips';
+import { useSound } from './lib/useSound';
 
 const TOTAL_CARDS = 52;
 
@@ -13,6 +14,7 @@ function App() {
   const [deck, setDeck] = useState<PlayingCard[]>(() => loadState()?.deck ?? []);
   const [drawn, setDrawn] = useState<PlayingCard | null>(() => loadState()?.drawn ?? null);
   const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
+  const { play, muted, toggleMute } = useSound();
 
   useEffect(() => {
     saveState({ phase, deck, drawn, completed });
@@ -40,6 +42,7 @@ function App() {
   }, [phase, drawn, deck.length]);
 
   const start = () => {
+    play('start');
     setDeck(shuffle(buildDeck()));
     setDrawn(null);
     setCompleted(0);
@@ -48,6 +51,7 @@ function App() {
 
   const draw = () => {
     if (drawn || deck.length === 0) return;
+    play('draw');
     const [next, ...rest] = deck;
     setDrawn(next);
     setDeck(rest);
@@ -59,7 +63,10 @@ function App() {
     setDrawn(null);
     setCompleted(newCompleted);
     if (deck.length === 0) {
+      play('finish');
       setPhase('done');
+    } else {
+      play('done');
     }
   };
 
@@ -73,6 +80,7 @@ function App() {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-hidden">
+      <MuteToggle muted={muted} onToggle={toggleMute} />
       {phase === 'idle' && <IdleScreen onStart={start} />}
       {phase === 'playing' && (
         <PlayingScreen
@@ -147,6 +155,20 @@ function TipCard({ tip }: { tip: string }) {
         {tip}
       </p>
     </div>
+  );
+}
+
+function MuteToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
+      className="absolute top-3 right-3 z-50 cel-shelf-sm rounded-full w-10 h-10 flex items-center justify-center text-base"
+      style={{ background: '#fdf6e3', color: '#2b1d10' }}
+    >
+      {muted ? '🔇' : '🔈'}
+    </button>
   );
 }
 

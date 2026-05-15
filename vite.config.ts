@@ -12,7 +12,7 @@ export default defineConfig({
       workbox: {
         skipWaiting: false,
         clientsClaim: false,
-        globPatterns: ['**/*.{js,css,html,svg,webp,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,webp,png,woff2,mp3}'],
       },
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'og-image.jpg'],
       manifest: {
