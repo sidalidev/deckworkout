@@ -7,6 +7,7 @@ import { clearState, loadState, saveState, type GamePhase } from './lib/persiste
 import { randomTip } from './lib/tips';
 import { useSound } from './lib/useSound';
 import { useMusic } from './lib/useMusic';
+import { usePiP, isPiPSupported } from './lib/usePiP';
 
 const TOTAL_CARDS = 52;
 
@@ -17,10 +18,61 @@ function App() {
   const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
   const { play, muted, toggleMute } = useSound();
   useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.18 });
+  const pip = usePiP();
 
   useEffect(() => {
     saveState({ phase, deck, drawn, completed });
   }, [phase, deck, drawn, completed]);
+
+  // PiP: render the current card into the floating window whenever it's open.
+  useEffect(() => {
+    if (!pip.open) return;
+    pip.render(
+      <PipView
+        deckCount={deck.length}
+        completed={completed}
+        drawn={drawn}
+        onAction={() => {
+          if (drawn) markDone();
+          else if (deck.length > 0) draw();
+        }}
+      />,
+    );
+  });
+
+  // Auto-close PiP when leaving the playing phase.
+  useEffect(() => {
+    if (phase !== 'playing' && pip.open) {
+      pip.close();
+    }
+  }, [phase, pip]);
+
+  // App badge: show remaining cards on the installed PWA icon when in-progress.
+  useEffect(() => {
+    const nav = navigator as Navigator & {
+      setAppBadge?: (n?: number) => Promise<void>;
+      clearAppBadge?: () => Promise<void>;
+    };
+    if (phase === 'playing' && completed < TOTAL_CARDS) {
+      void nav.setAppBadge?.(TOTAL_CARDS - completed);
+    } else {
+      void nav.clearAppBadge?.();
+    }
+  }, [phase, completed]);
+
+  // Handle URL shortcuts: /?action=start | resume. Called once on mount.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+    if (!action) return;
+    if (action === 'start') {
+      start();
+    }
+    // 'resume' is implicit — loadState() already restored phase/deck/drawn.
+    // Clean the URL so the action doesn't re-trigger on refresh.
+    window.history.replaceState({}, '', window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -92,6 +144,8 @@ function App() {
           onDraw={draw}
           onDone={markDone}
           onReset={reset}
+          onOpenPiP={() => pip.openPiP()}
+          pipOpen={pip.open}
         />
       )}
       {phase === 'done' && <DoneScreen onRestart={start} onHome={reset} />}
@@ -178,6 +232,133 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
   );
 }
 
+function PipView({
+  deckCount,
+  completed,
+  drawn,
+  onAction,
+}: {
+  deckCount: number;
+  completed: number;
+  drawn: PlayingCard | null;
+  onAction: () => void;
+}) {
+  return (
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '10px 12px',
+        background: '#fdf6e3',
+      }}
+    >
+      <div
+        style={{
+          fontFamily: 'Nunito, system-ui, sans-serif',
+          fontSize: 13,
+          fontWeight: 800,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: '#4a3624',
+        }}
+      >
+        <span style={{ color: '#2f7fa8', fontSize: 18, fontWeight: 900, marginRight: 4 }}>
+          {completed}
+        </span>
+        <span style={{ color: '#b39e7e' }}>/ {TOTAL_CARDS}</span>
+      </div>
+
+      <button
+        type="button"
+        onClick={onAction}
+        disabled={deckCount === 0 && !drawn}
+        style={{
+          aspectRatio: '5 / 7',
+          width: '78%',
+          maxHeight: 240,
+          padding: 0,
+          border: 'none',
+          background: 'transparent',
+          cursor: 'pointer',
+        }}
+        aria-label={drawn ? 'Mark card done' : 'Draw a card'}
+      >
+        {drawn ? <PlayingCardFace card={drawn} /> : <PipDeckPreview remaining={deckCount} />}
+      </button>
+
+      <div
+        style={{
+          fontFamily: 'Nunito, system-ui, sans-serif',
+          fontSize: 11,
+          fontWeight: 800,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: drawn ? '#fdf6e3' : '#76624a',
+          background: drawn ? '#2f7fa8' : 'transparent',
+          padding: drawn ? '8px 18px' : '8px 0',
+          borderRadius: 999,
+          border: drawn ? '2px solid #2b1d10' : 'none',
+          boxShadow: drawn ? '0 3px 0 0 #2b1d10' : 'none',
+        }}
+      >
+        {drawn ? 'Tap to mark done' : deckCount > 0 ? 'Tap deck to draw' : 'Finished!'}
+      </div>
+    </div>
+  );
+}
+
+function PipDeckPreview({ remaining }: { remaining: number }) {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          background: '#fdf6e3',
+          border: '2px solid #2b1d10',
+          boxShadow: '0 4px 0 0 #2b1d10',
+          borderRadius: '8%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 36,
+        }}
+      >
+        🃏
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -6,
+          right: -6,
+          background: '#2f7fa8',
+          color: '#fdf6e3',
+          fontFamily: 'Nunito, system-ui, sans-serif',
+          fontWeight: 900,
+          fontSize: 12,
+          padding: '4px 8px',
+          borderRadius: 999,
+          border: '2px solid #2b1d10',
+        }}
+      >
+        {remaining}
+      </div>
+    </div>
+  );
+}
+
 function MuteToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void }) {
   return (
     <button
@@ -215,6 +396,8 @@ type PlayingScreenProps = {
   onDraw: () => void;
   onDone: () => void;
   onReset: () => void;
+  onOpenPiP: () => void;
+  pipOpen: boolean;
 };
 
 function PlayingScreen({
@@ -224,6 +407,8 @@ function PlayingScreen({
   onDraw,
   onDone,
   onReset,
+  onOpenPiP,
+  pipOpen,
 }: PlayingScreenProps) {
   return (
     <motion.div
@@ -241,14 +426,27 @@ function PlayingScreen({
           >
             Quit
           </button>
-          <div className="text-ink-700 text-sm uppercase tracking-[0.18em] font-bold">
-            <span
-              className="text-ink-900 font-black text-lg display mr-1"
-              style={{ color: '#2f7fa8' }}
-            >
-              {completed}
-            </span>
-            <span className="text-ink-300">/ {TOTAL_CARDS}</span>
+          <div className="flex items-center gap-3">
+            {isPiPSupported() && !pipOpen && (
+              <button
+                type="button"
+                onClick={onOpenPiP}
+                aria-label="Open in mini window"
+                className="text-ink-500 hover:text-ink-900 text-sm leading-none"
+                title="Pop out a floating mini window"
+              >
+                ⇱
+              </button>
+            )}
+            <div className="text-ink-700 text-sm uppercase tracking-[0.18em] font-bold">
+              <span
+                className="text-ink-900 font-black text-lg display mr-1"
+                style={{ color: '#2f7fa8' }}
+              >
+                {completed}
+              </span>
+              <span className="text-ink-300">/ {TOTAL_CARDS}</span>
+            </div>
           </div>
         </div>
         <ProgressBar value={completed} max={TOTAL_CARDS} />

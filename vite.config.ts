@@ -24,6 +24,25 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
+        launch_handler: {
+          client_mode: 'navigate-existing',
+        },
+        shortcuts: [
+          {
+            name: 'Quick start',
+            short_name: 'Start',
+            description: 'Shuffle a fresh deck and start a new workout',
+            url: '/?action=start',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+          },
+          {
+            name: 'Resume workout',
+            short_name: 'Resume',
+            description: 'Continue your in-progress workout',
+            url: '/?action=resume',
+            icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+          },
+        ],
         icons: [
           {
             src: '/favicon.svg',
