@@ -38,7 +38,7 @@ export function useSound() {
   }, []);
 
   const play = useCallback(
-    (name: SoundName, volume = 0.7) => {
+    (name: SoundName, volume = 0.4) => {
       if (muted) return;
       const a = audioMap.current.get(name);
       if (!a) return;

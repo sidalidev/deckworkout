@@ -16,7 +16,7 @@ function App() {
   const [drawn, setDrawn] = useState<PlayingCard | null>(() => loadState()?.drawn ?? null);
   const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
   const { play, muted, toggleMute } = useSound();
-  useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.25 });
+  useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.18 });
 
   useEffect(() => {
     saveState({ phase, deck, drawn, completed });
