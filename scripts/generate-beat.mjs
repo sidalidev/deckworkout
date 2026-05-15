@@ -17,9 +17,9 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const PROMPT = `Classic 90s old school boom-bap hip hop instrumental beat, 90 BPM, dusty vinyl crackle, warm jazz piano sample chops, gritty boom-bap drums with thick kick and crisp snare, mellow upright bass groove, soulful and hypnotic background loop, no vocals, no rap, purely instrumental, seamless looping background music suitable for a workout session.`;
+const PROMPT = `A classic 90s East Coast New York old-school boom-bap hip hop instrumental beat with a slow head-nodding 80 BPM tempo, very drum-forward and beat-heavy: thick deep punchy kick drum and crisp dusty snare hitting hard on the 2 and 4, hi-hat shuffle, hypnotic four-bar drum loop that repeats over and over without variation, gritty dusty sampled vinyl texture with crackle and lo-fi warmth, mellow understated soul or jazz piano chop in the background, minimal upright bass groove, no intro, no outro, no buildup, no breakdown, no section change, no fadeout — purely a tight repeating instrumental loop, designed as seamless background music. No vocals, no rap, instrumental only.`;
 
-const LENGTH_MS = 75000; // 75 seconds — loopable, decent file size
+const LENGTH_MS = 90000; // 90 seconds — long enough for a satisfying loop
 
 await mkdir(OUT_DIR, { recursive: true });
 
