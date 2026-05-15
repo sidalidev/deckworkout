@@ -158,13 +158,31 @@ function TipCard({ tip }: { tip: string }) {
   );
 }
 
+function ProgressBar({ value, max }: { value: number; max: number }) {
+  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  return (
+    <div
+      className="w-full h-2.5 rounded-full overflow-hidden"
+      style={{ background: '#ddcfa6', border: '2px solid #2b1d10' }}
+    >
+      <motion.div
+        className="h-full"
+        style={{ background: '#2f7fa8' }}
+        initial={false}
+        animate={{ width: `${pct}%` }}
+        transition={{ type: 'spring', stiffness: 140, damping: 20 }}
+      />
+    </div>
+  );
+}
+
 function MuteToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void }) {
   return (
     <button
       type="button"
       onClick={onToggle}
       aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
-      className="absolute top-3 right-3 z-50 cel-shelf-sm rounded-full w-10 h-10 flex items-center justify-center text-base"
+      className="fixed bottom-3 left-3 z-50 cel-shelf-sm rounded-full w-10 h-10 flex items-center justify-center text-base"
       style={{ background: '#fdf6e3', color: '#2b1d10' }}
     >
       {muted ? '🔇' : '🔈'}
@@ -212,23 +230,26 @@ function PlayingScreen({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="w-full flex justify-between items-center px-2 max-w-md">
-        <button
-          type="button"
-          onClick={onReset}
-          className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900"
-        >
-          Quit
-        </button>
-        <div className="text-ink-700 text-sm uppercase tracking-[0.18em] font-bold">
-          <span
-            className="text-ink-900 font-black text-lg display mr-1"
-            style={{ color: '#2f7fa8' }}
+      <div className="w-full max-w-md flex flex-col gap-2 px-2">
+        <div className="flex justify-between items-center">
+          <button
+            type="button"
+            onClick={onReset}
+            className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900"
           >
-            {completed}
-          </span>
-          <span className="text-ink-300">/ {TOTAL_CARDS}</span>
+            Quit
+          </button>
+          <div className="text-ink-700 text-sm uppercase tracking-[0.18em] font-bold">
+            <span
+              className="text-ink-900 font-black text-lg display mr-1"
+              style={{ color: '#2f7fa8' }}
+            >
+              {completed}
+            </span>
+            <span className="text-ink-300">/ {TOTAL_CARDS}</span>
+          </div>
         </div>
+        <ProgressBar value={completed} max={TOTAL_CARDS} />
       </div>
 
       <div className="relative flex-1 w-full flex items-center justify-center">
