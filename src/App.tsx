@@ -6,6 +6,7 @@ import { PlayingCardFace } from './components/PlayingCardFace';
 import { clearState, loadState, saveState, type GamePhase } from './lib/persistence';
 import { randomTip } from './lib/tips';
 import { useSound } from './lib/useSound';
+import { useMusic } from './lib/useMusic';
 
 const TOTAL_CARDS = 52;
 
@@ -15,6 +16,7 @@ function App() {
   const [drawn, setDrawn] = useState<PlayingCard | null>(() => loadState()?.drawn ?? null);
   const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
   const { play, muted, toggleMute } = useSound();
+  useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.25 });
 
   useEffect(() => {
     saveState({ phase, deck, drawn, completed });
