@@ -5,6 +5,8 @@ services:
     build: .
     container_name: deckworkout-web
     restart: always
+    security_opt:
+      - no-new-privileges:true
     networks:
       - traefik_web
     labels:
@@ -33,6 +35,8 @@ services:
     build: ./server
     container_name: deckworkout-api
     restart: always
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PORT=3000
       - DATA_DIR=/app/data
