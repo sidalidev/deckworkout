@@ -13,11 +13,12 @@ services:
       # Service
       - "traefik.http.services.deckworkout-web.loadbalancer.server.port=80"
 
-      # HTTPS Router
+      # HTTPS Router (lower priority — api router takes precedence on /api)
       - "traefik.http.routers.deckworkout-web-secure.rule=Host(`deckworkout.dockerbop.fr`)"
       - "traefik.http.routers.deckworkout-web-secure.entrypoints=websecure"
       - "traefik.http.routers.deckworkout-web-secure.tls=true"
       - "traefik.http.routers.deckworkout-web-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.deckworkout-web-secure.priority=1"
 
       # HTTP Router (redirect)
       - "traefik.http.routers.deckworkout-web.rule=Host(`deckworkout.dockerbop.fr`)"
@@ -27,6 +28,37 @@ services:
       # Middleware redirect
       - "traefik.http.middlewares.deckworkout-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.deckworkout-https-redirect.redirectscheme.permanent=true"
+
+  api:
+    build: ./server
+    container_name: deckworkout-api
+    restart: always
+    environment:
+      - PORT=3000
+      - DATA_DIR=/app/data
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - VAPID_SUBJECT=${VAPID_SUBJECT}
+    volumes:
+      - ./server-data:/app/data
+    networks:
+      - traefik_web
+    labels:
+      - "traefik.enable=true"
+
+      # Service
+      - "traefik.http.services.deckworkout-api.loadbalancer.server.port=3000"
+
+      # Higher priority so /api/* hits api before web router
+      - "traefik.http.routers.deckworkout-api-secure.rule=Host(`deckworkout.dockerbop.fr`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.deckworkout-api-secure.entrypoints=websecure"
+      - "traefik.http.routers.deckworkout-api-secure.tls=true"
+      - "traefik.http.routers.deckworkout-api-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.deckworkout-api-secure.priority=10"
+      - "traefik.http.routers.deckworkout-api-secure.middlewares=deckworkout-api-strip"
+
+      # Strip the /api prefix before forwarding (so backend handlers see /subscribe etc.)
+      - "traefik.http.middlewares.deckworkout-api-strip.stripprefix.prefixes=/api"
 
 networks:
   traefik_web:

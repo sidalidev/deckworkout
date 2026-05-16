@@ -8,6 +8,7 @@ import { randomTip } from './lib/tips';
 import { useSound } from './lib/useSound';
 import { useMusic } from './lib/useMusic';
 import { usePiP, isPiPSupported } from './lib/usePiP';
+import { usePush, reportWorkoutState } from './lib/usePush';
 
 const TOTAL_CARDS = 52;
 
@@ -19,6 +20,17 @@ function App() {
   const { play, muted, toggleMute } = useSound();
   useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.18 });
   const pip = usePiP();
+  const push = usePush();
+
+  // Notify backend about workout state for in-progress reminders
+  useEffect(() => {
+    if (!push.subscribed) return;
+    if (phase === 'playing') {
+      reportWorkoutState('in-progress', completed);
+    } else {
+      reportWorkoutState('cleared', completed);
+    }
+  }, [phase, completed, push.subscribed]);
 
   useEffect(() => {
     saveState({ phase, deck, drawn, completed });
@@ -135,7 +147,7 @@ function App() {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center px-4 py-6 overflow-hidden">
       <MuteToggle muted={muted} onToggle={toggleMute} />
-      {phase === 'idle' && <IdleScreen onStart={start} />}
+      {phase === 'idle' && <IdleScreen onStart={start} push={push} />}
       {phase === 'playing' && (
         <PlayingScreen
           deckCount={deck.length}
@@ -148,12 +160,14 @@ function App() {
           pipOpen={pip.open}
         />
       )}
-      {phase === 'done' && <DoneScreen onRestart={start} onHome={reset} />}
+      {phase === 'done' && <DoneScreen onRestart={start} onHome={reset} push={push} />}
     </div>
   );
 }
 
-function IdleScreen({ onStart }: { onStart: () => void }) {
+type PushApi = ReturnType<typeof usePush>;
+
+function IdleScreen({ onStart, push }: { onStart: () => void; push: PushApi }) {
   const tip = useMemo(() => randomTip(), []);
   return (
     <motion.div
@@ -191,7 +205,36 @@ function IdleScreen({ onStart }: { onStart: () => void }) {
       <CelButton onClick={onStart} variant="sea">
         Start
       </CelButton>
+
+      <PushCta push={push} />
     </motion.div>
+  );
+}
+
+function PushCta({ push }: { push: PushApi }) {
+  if (!push.supported) return null;
+  if (push.permission === 'denied') return null;
+  if (push.subscribed) {
+    return (
+      <button
+        type="button"
+        onClick={push.disable}
+        disabled={push.loading}
+        className="text-ink-500 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900 disabled:opacity-50"
+      >
+        🔔 Reminders on · turn off
+      </button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={push.enable}
+      disabled={push.loading}
+      className="text-ink-700 text-xs uppercase tracking-[0.18em] font-bold hover:text-ink-900 disabled:opacity-50 underline underline-offset-4 decoration-ink-300"
+    >
+      {push.loading ? 'Enabling…' : '🔔 Enable daily reminder'}
+    </button>
   );
 }
 
@@ -495,7 +538,7 @@ function PlayingScreen({
   );
 }
 
-function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () => void }) {
+function DoneScreen({ onRestart, onHome, push }: { onRestart: () => void; onHome: () => void; push: PushApi }) {
   const tip = useMemo(() => randomTip(), []);
   return (
     <motion.div
@@ -532,6 +575,7 @@ function DoneScreen({ onRestart, onHome }: { onRestart: () => void; onHome: () =
         >
           Home
         </button>
+        <PushCta push={push} />
       </div>
     </motion.div>
   );

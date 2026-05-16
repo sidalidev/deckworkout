@@ -8,10 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
-      workbox: {
-        skipWaiting: false,
-        clientsClaim: false,
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,webp,png,woff2,mp3}'],
       },
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'og-image.jpg'],
