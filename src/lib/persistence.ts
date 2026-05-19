@@ -1,7 +1,7 @@
 import type { PlayingCard } from './deck';
 
 const STORAGE_KEY = 'deckworkout:state:v1';
-const MAX_AGE_MS = 30 * 60 * 1000;
+const MAX_AGE_MS = 4 * 60 * 60 * 1000; // 4h — covers long workouts with breaks
 
 export type GamePhase = 'idle' | 'playing' | 'done';
 
@@ -10,6 +10,7 @@ export type PersistedState = {
   deck: PlayingCard[];
   drawn: PlayingCard | null;
   completed: number;
+  startedAt: number | null;
 };
 
 type StoredState = PersistedState & { savedAt: number };
@@ -29,6 +30,7 @@ export function loadState(): PersistedState | null {
       deck: data.deck,
       drawn: data.drawn,
       completed: data.completed,
+      startedAt: data.startedAt ?? null,
     };
   } catch {
     return null;

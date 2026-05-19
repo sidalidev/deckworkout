@@ -9,6 +9,7 @@ import { useSound } from './lib/useSound';
 import { useMusic } from './lib/useMusic';
 import { usePiP, isPiPSupported } from './lib/usePiP';
 import { usePush, reportWorkoutState } from './lib/usePush';
+import { useElapsed, formatElapsed } from './lib/useElapsed';
 
 const TOTAL_CARDS = 52;
 
@@ -17,6 +18,8 @@ function App() {
   const [deck, setDeck] = useState<PlayingCard[]>(() => loadState()?.deck ?? []);
   const [drawn, setDrawn] = useState<PlayingCard | null>(() => loadState()?.drawn ?? null);
   const [completed, setCompleted] = useState(() => loadState()?.completed ?? 0);
+  const [startedAt, setStartedAt] = useState<number | null>(() => loadState()?.startedAt ?? null);
+  const [finalDurationMs, setFinalDurationMs] = useState<number | null>(null);
   const { play, muted, toggleMute } = useSound();
   useMusic({ src: '/sounds/beat.mp3', playing: phase === 'playing', muted, volume: 0.18 });
   const pip = usePiP();
@@ -33,8 +36,8 @@ function App() {
   }, [phase, completed, push.subscribed]);
 
   useEffect(() => {
-    saveState({ phase, deck, drawn, completed });
-  }, [phase, deck, drawn, completed]);
+    saveState({ phase, deck, drawn, completed, startedAt });
+  }, [phase, deck, drawn, completed, startedAt]);
 
   // PiP: render the current card into the floating window whenever it's open.
   useEffect(() => {
@@ -112,6 +115,8 @@ function App() {
     setDeck(shuffle(buildDeck()));
     setDrawn(null);
     setCompleted(0);
+    setStartedAt(Date.now());
+    setFinalDurationMs(null);
     setPhase('playing');
   };
 
@@ -130,6 +135,7 @@ function App() {
     setCompleted(newCompleted);
     if (deck.length === 0) {
       play('finish');
+      setFinalDurationMs(startedAt ? Date.now() - startedAt : 0);
       setPhase('done');
     } else {
       play('done');
@@ -141,6 +147,7 @@ function App() {
     setDeck([]);
     setDrawn(null);
     setCompleted(0);
+    setStartedAt(null);
     clearState();
   };
 
@@ -153,6 +160,7 @@ function App() {
           deckCount={deck.length}
           completed={completed}
           drawn={drawn}
+          startedAt={startedAt}
           onDraw={draw}
           onDone={markDone}
           onReset={reset}
@@ -160,7 +168,9 @@ function App() {
           pipOpen={pip.open}
         />
       )}
-      {phase === 'done' && <DoneScreen onRestart={start} onHome={reset} push={push} />}
+      {phase === 'done' && (
+        <DoneScreen onRestart={start} onHome={reset} push={push} durationMs={finalDurationMs} />
+      )}
     </div>
   );
 }
@@ -436,6 +446,7 @@ type PlayingScreenProps = {
   deckCount: number;
   completed: number;
   drawn: PlayingCard | null;
+  startedAt: number | null;
   onDraw: () => void;
   onDone: () => void;
   onReset: () => void;
@@ -447,12 +458,14 @@ function PlayingScreen({
   deckCount,
   completed,
   drawn,
+  startedAt,
   onDraw,
   onDone,
   onReset,
   onOpenPiP,
   pipOpen,
 }: PlayingScreenProps) {
+  const elapsedMs = useElapsed(startedAt);
   return (
     <motion.div
       className="w-full h-full flex flex-col items-center justify-between py-2"
@@ -493,6 +506,12 @@ function PlayingScreen({
           </div>
         </div>
         <ProgressBar value={completed} max={TOTAL_CARDS} />
+        <div
+          className="text-center text-ink-700 text-sm font-black display tabular-nums tracking-wider"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          {formatElapsed(elapsedMs)}
+        </div>
       </div>
 
       <div className="relative flex-1 w-full flex items-center justify-center">
@@ -538,7 +557,17 @@ function PlayingScreen({
   );
 }
 
-function DoneScreen({ onRestart, onHome, push }: { onRestart: () => void; onHome: () => void; push: PushApi }) {
+function DoneScreen({
+  onRestart,
+  onHome,
+  push,
+  durationMs,
+}: {
+  onRestart: () => void;
+  onHome: () => void;
+  push: PushApi;
+  durationMs: number | null;
+}) {
   const tip = useMemo(() => randomTip(), []);
   return (
     <motion.div
@@ -560,6 +589,14 @@ function DoneScreen({ onRestart, onHome, push }: { onRestart: () => void; onHome
         <p className="mt-3 text-ink-700 uppercase tracking-[0.18em] text-sm font-bold">
           52 cards crushed
         </p>
+        {durationMs != null && durationMs > 0 && (
+          <p
+            className="mt-2 text-4xl md:text-5xl font-black display tabular-nums"
+            style={{ fontFamily: 'var(--font-display)', color: '#2f7fa8' }}
+          >
+            {formatElapsed(durationMs)}
+          </p>
+        )}
       </div>
 
       <TipCard tip={tip} />
